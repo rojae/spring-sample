@@ -1,0 +1,65 @@
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/batch_db
+    username: batch_user
+    password: batch_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# Swagger 설정
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.example.batch: DEBUG
+    org.springframework.batch: INFO
+
+# 배치 설정
+batch:
+  chunk-size: 1000
+  page-size: 1000
+  skip-limit: 100
+  retry-limit: 3
+  thread-pool-size: 4
+  partition-size: 4
+  scheduling:
+    enabled: true  # 30초마다 자동 실행

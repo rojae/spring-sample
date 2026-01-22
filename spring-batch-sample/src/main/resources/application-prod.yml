@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/batch_db}
+    username: ${DB_USERNAME:batch_user}
+    password: ${DB_PASSWORD:batch_password}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    root: WARN
+    com.example.batch: INFO
+    org.springframework.batch: INFO
+
+# 운영 환경 배치 설정
+batch:
+  chunk-size: 5000
+  page-size: 5000
+  thread-pool-size: 8
+  partition-size: 8

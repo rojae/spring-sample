@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: email-send-batch
+  labels:
+    app: email-batch
+spec:
+  schedule: "0 6 * * *"  # 매일 오전 6시
+  concurrencyPolicy: Forbid  # 중복 실행 방지
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app: email-batch
+        spec:
+          containers:
+          - name: email-batch
+            image: email-batch:latest
+            imagePullPolicy: IfNotPresent
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "2Gi"
+                cpu: "2000m"
+            env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: JAVA_OPTS
+              value: "-Xms512m -Xmx2g -XX:+UseG1GC"
+          restartPolicy: OnFailure
+
+---
+# Secret 예시 (실제 운영에서는 별도 관리 필요)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+stringData:
+  url: "jdbc:postgresql://postgres-service:5432/batch_db"
+  username: "postgres"
+  password: "postgres"
