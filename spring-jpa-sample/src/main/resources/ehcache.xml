@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+
+    <!--
+    EhCache 설정 - Hibernate 2차 캐시 프로바이더
+
+    캐시 전략:
+    1. heap: JVM 힙 메모리 (가장 빠름)
+    2. offheap: JVM 외부 메모리 (GC 영향 없음)
+    3. disk: 디스크 저장 (영속성)
+    -->
+
+    <!-- 기본 캐시 템플릿 -->
+    <cache-template name="default">
+        <expiry>
+            <ttl unit="minutes">10</ttl>
+        </expiry>
+        <heap unit="entries">100</heap>
+    </cache-template>
+
+    <!-- Member 엔티티 캐시 -->
+    <cache alias="memberCache" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">30</ttl>
+        </expiry>
+        <heap unit="entries">500</heap>
+    </cache>
+
+    <!-- Team 엔티티 캐시 (읽기 전용이므로 오래 유지) -->
+    <cache alias="teamCache" uses-template="default">
+        <expiry>
+            <ttl unit="hours">1</ttl>
+        </expiry>
+        <heap unit="entries">100</heap>
+    </cache>
+
+    <!-- Order 엔티티 캐시 -->
+    <cache alias="orderCache" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">5</ttl>
+        </expiry>
+        <heap unit="entries">1000</heap>
+    </cache>
+
+    <!-- Product 엔티티 캐시 -->
+    <cache alias="productCache" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">15</ttl>
+        </expiry>
+        <heap unit="entries">500</heap>
+    </cache>
+
+    <!-- 쿼리 캐시 -->
+    <cache alias="default-query-results-region" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">5</ttl>
+        </expiry>
+        <heap unit="entries">200</heap>
+    </cache>
+
+    <!-- Timestamp 캐시 (쿼리 캐시 무효화용) -->
+    <cache alias="default-update-timestamps-region" uses-template="default">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap unit="entries">5000</heap>
+    </cache>
+
+</config>

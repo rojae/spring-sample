@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: spring-jpa-sample
+
+  # DataSource 설정 (PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        # ==================== 2차 캐시 설정 ====================
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+
+        # JCache (JSR-107) 설정
+        javax:
+          cache:
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+            uri: classpath:ehcache.xml
+
+        # 통계 활성화 (개발/디버깅용)
+        generate_statistics: true
+
+        # 배치 처리 최적화
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+          order_inserts: true
+          order_updates: true
+          fetch_size: 50
+
+        # 기타 최적화
+        default_batch_fetch_size: 100
+
+    open-in-view: false
+
+# Logging
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.cache: DEBUG
+    org.springframework.cache: DEBUG
+    com.example.jpa: DEBUG
+
+# Server
+server:
+  port: 8080

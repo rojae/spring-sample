@@ -1,3 +1,5 @@
 rootProject.name = 'spring-sample'
 
 include 'spring-batch-sample'
+include 'spring-jpa-sample'
+include 'spring-mcp-sample'

@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: spring-jpa-sample-infinispan-test
+
+  # PostgreSQL Database (docker-compose)
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+
+  # JPA Settings
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        generate_statistics: true
+    open-in-view: false
+
+  # Disable Redis
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  # Disable Infinispan auto-configuration (we use custom config)
+  autoconfigure:
+    exclude:
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedAutoConfiguration
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedCacheManagerAutoConfiguration
+
+# Infinispan 설정 - 테스트 (로컬 모드, 클러스터 없음)
+infinispan:
+  config:
+    location: infinispan-test.xml  # local-cache 사용
+
+logging:
+  level:
+    org.infinispan: INFO
+    org.springframework.cache: DEBUG
+    com.example.jpa: DEBUG

@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: spring-jpa-sample
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+        # Infinispan을 Hibernate 2차 캐시로 사용
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.infinispan.hibernate.cache.v62.InfinispanRegionFactory
+          infinispan:
+            cfg: infinispan.xml
+
+        generate_statistics: true
+        jdbc:
+          batch_size: 50
+
+    open-in-view: false
+
+# Infinispan 설정 - 프로덕션 (클러스터 모드)
+infinispan:
+  config:
+    location: infinispan.xml  # replicated-cache 사용
+
+logging:
+  level:
+    org.infinispan: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.cache: DEBUG
+    com.example.jpa: DEBUG
+
+server:
+  port: 8080

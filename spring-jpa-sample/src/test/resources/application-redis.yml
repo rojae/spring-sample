@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: spring-jpa-sample-redis-test
+
+  # PostgreSQL Database (docker-compose)
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+
+  # JPA Settings
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        generate_statistics: true
+    open-in-view: false
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Disable Infinispan auto-configuration
+  autoconfigure:
+    exclude:
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedAutoConfiguration
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedCacheManagerAutoConfiguration
+
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+    org.springframework.cache: DEBUG
+    com.example.jpa: DEBUG

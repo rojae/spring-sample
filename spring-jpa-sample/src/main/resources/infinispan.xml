@@ -1,0 +1,72 @@
+1<?xml version="1.0" encoding="UTF-8"?>
+<infinispan xmlns="urn:infinispan:config:14.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:infinispan:config:14.0 https://infinispan.org/schemas/infinispan-config-14.0.xsd">
+
+    <!--
+    Infinispan 설정 - Hibernate 2차 캐시용
+
+    캐시 모드:
+    - local: 로컬 캐시 (분산 안함)
+    - replicated: 모든 노드에 복제
+    - distributed: 일부 노드에만 저장
+    - invalidation: 변경 시 다른 노드의 캐시 무효화
+    -->
+
+    <!-- JGroups 전송 설정 (클러스터링) -->
+    <jgroups>
+        <stack name="tcp" extends="tcp">
+            <MPING xmlns="urn:org:jgroups"
+                   mcast_addr="${jgroups.mcast_addr:228.6.7.8}"
+                   mcast_port="${jgroups.mcast_port:46655}"/>
+        </stack>
+    </jgroups>
+
+    <cache-container name="hibernate-cache" default-cache="local-query" statistics="true">
+        <transport cluster="hibernate-cluster" stack="tcp"/>
+
+        <!-- 로컬 쿼리 캐시 (기본) -->
+        <local-cache name="local-query">
+            <expiration lifespan="300000" max-idle="120000"/>
+            <memory max-count="1000"/>
+        </local-cache>
+
+        <!-- Entity 캐시: 복제 모드 -->
+        <replicated-cache name="entity">
+            <expiration lifespan="600000"/>
+            <memory max-count="10000"/>
+        </replicated-cache>
+
+        <!-- Member 캐시 -->
+        <replicated-cache name="com.example.jpa.entity.Member">
+            <expiration lifespan="1800000"/>
+            <memory max-count="500"/>
+        </replicated-cache>
+
+        <!-- Product 캐시 -->
+        <replicated-cache name="com.example.jpa.entity.Product">
+            <expiration lifespan="900000"/>
+            <memory max-count="500"/>
+        </replicated-cache>
+
+        <!-- Team 캐시 (거의 안 변함) -->
+        <replicated-cache name="com.example.jpa.entity.Team">
+            <expiration lifespan="3600000"/>
+            <memory max-count="100"/>
+        </replicated-cache>
+
+        <!-- 쿼리 캐시 -->
+        <local-cache name="default-query-results-region">
+            <expiration lifespan="300000"/>
+            <memory max-count="200"/>
+        </local-cache>
+
+        <!-- Timestamp 캐시 -->
+        <replicated-cache name="default-update-timestamps-region">
+            <expiration lifespan="-1"/>
+            <memory max-count="5000"/>
+        </replicated-cache>
+
+    </cache-container>
+
+</infinispan>

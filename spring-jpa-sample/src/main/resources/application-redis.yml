@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: spring-jpa-sample
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+
+  # Redis 설정
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      # password: your-password
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+      # Sentinel 설정 (고가용성)
+      # sentinel:
+      #   master: mymaster
+      #   nodes: host1:26379,host2:26379,host3:26379
+      # Cluster 설정 (샤딩)
+      # cluster:
+      #   nodes: host1:6379,host2:6379,host3:6379
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+        # Redisson을 Hibernate 2차 캐시로 사용
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            config: classpath:redisson.yaml
+
+        generate_statistics: true
+        jdbc:
+          batch_size: 50
+
+    open-in-view: false
+
+logging:
+  level:
+    io.lettuce: INFO
+    org.springframework.data.redis: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.cache: DEBUG
+    com.example.jpa: DEBUG
+
+server:
+  port: 8080

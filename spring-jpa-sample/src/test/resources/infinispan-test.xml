@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<infinispan xmlns="urn:infinispan:config:14.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:infinispan:config:14.0 https://infinispan.org/schemas/infinispan-config-14.0.xsd">
+
+    <!--
+    Infinispan 테스트 설정 - 단일 노드 (LOCAL 모드)
+
+    프로덕션에서는 infinispan.xml (replicated/distributed) 사용
+    테스트에서는 클러스터 없이 LOCAL 모드로 동작
+    -->
+
+    <cache-container name="spring-jpa-infinispan" default-cache="default" statistics="true">
+        <!-- transport 없음 - 로컬 모드만 사용 -->
+
+        <!-- 기본 캐시 -->
+        <local-cache name="default" statistics="true">
+            <expiration lifespan="600000" max-idle="300000"/>
+            <memory max-count="1000"/>
+        </local-cache>
+
+        <!-- Member 캐시 -->
+        <local-cache name="members">
+            <expiration lifespan="1800000"/>
+            <memory max-count="500"/>
+        </local-cache>
+
+        <!-- Product 캐시 -->
+        <local-cache name="products">
+            <expiration lifespan="900000"/>
+            <memory max-count="500"/>
+        </local-cache>
+
+        <!-- Team 캐시 -->
+        <local-cache name="teams">
+            <expiration lifespan="3600000"/>
+            <memory max-count="100"/>
+        </local-cache>
+
+        <!-- membersByStatus 캐시 -->
+        <local-cache name="membersByStatus">
+            <expiration lifespan="300000"/>
+            <memory max-count="100"/>
+        </local-cache>
+
+        <!-- 쿼리용 캐시 -->
+        <local-cache name="local-query">
+            <expiration lifespan="300000" max-idle="120000"/>
+            <memory max-count="200"/>
+        </local-cache>
+
+        <!-- 테스트용 캐시들 -->
+        <local-cache name="test-cache" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+        <local-cache name="ttl-test" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+        <local-cache name="idle-test" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+        <local-cache name="stats-test" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+        <local-cache name="conditional-test" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+        <local-cache name="replace-test" statistics="true">
+            <memory max-count="100"/>
+        </local-cache>
+
+    </cache-container>
+
+</infinispan>

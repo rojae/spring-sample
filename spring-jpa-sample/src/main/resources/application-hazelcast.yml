@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: spring-jpa-sample
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jpa_db
+    driver-class-name: org.postgresql.Driver
+    username: jpa_user
+    password: dba_password
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+        # Hazelcast를 Hibernate 2차 캐시로 사용
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+          # 또는 로컬 모드만: com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory
+
+        generate_statistics: true
+        jdbc:
+          batch_size: 50
+
+    open-in-view: false
+
+# Hazelcast 설정
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: true
+      tcp-ip:
+        enabled: false
+
+logging:
+  level:
+    com.hazelcast: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.cache: DEBUG
+    com.example.jpa: DEBUG
+
+server:
+  port: 8080
