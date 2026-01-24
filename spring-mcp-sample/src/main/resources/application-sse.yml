@@ -1,0 +1,20 @@
+# SSE 모드 - HTTP 서버로 외부 사용자에게 제공
+spring:
+  main:
+    web-application-type: reactive
+  ai:
+    mcp:
+      server:
+        stdio: false
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8080
+  netty:
+    connection-timeout: 30000
+
+logging:
+  level:
+    root: INFO
+    com.example.mcpsample: DEBUG
+    io.netty: WARN

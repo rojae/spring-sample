@@ -1,0 +1,13 @@
+# STDIO 모드 - Claude Desktop/Claude Code 로컬 연동용
+spring:
+  main:
+    banner-mode: off
+    web-application-type: none
+  ai:
+    mcp:
+      server:
+        stdio: true
+
+logging:
+  level:
+    root: OFF

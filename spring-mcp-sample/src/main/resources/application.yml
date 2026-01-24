@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: mcp-todo-server
+  ai:
+    mcp:
+      server:
+        name: todo-mcp-server
+        version: 1.0.0
+
+  # PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5434/mcp_db
+    username: mcp_user
+    password: mcp_password
+    driver-class-name: org.postgresql.Driver
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
