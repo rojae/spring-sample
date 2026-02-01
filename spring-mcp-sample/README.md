@@ -9,6 +9,7 @@ Spring Boot 기반의 MCP (Model Context Protocol) Server 예제입니다.
 - Spring AI 1.0.3
   - spring-ai-starter-mcp-server (STDIO 모드)
   - spring-ai-starter-mcp-server-webflux (SSE 모드)
+  - spring-ai-starter-mcp-server-webmvc (Streamable HTTP 모드)
 - Spring Data JPA
 - PostgreSQL 15
 - Gradle
@@ -19,16 +20,19 @@ Spring Boot 기반의 MCP (Model Context Protocol) Server 예제입니다.
 |------|----------|------|-----------|
 | **STDIO** | `stdio` | 로컬 Claude Desktop/Code 연동 | stdin/stdout |
 | **SSE** | `sse` | HTTP 서버로 외부 사용자 제공 | HTTP + Server-Sent Events |
+| **Streamable HTTP** | `streamable` | 클라우드/K8s 배포 (권장) | HTTP (Stateless 가능) |
 
 ## 인터페이스
 
-이 서버는 **3가지 방식**으로 접근할 수 있습니다:
+이 서버는 **4가지 방식**으로 접근할 수 있습니다:
 
 | 인터페이스 | 엔드포인트 | 용도 |
 |-----------|-----------|------|
 | **MCP (STDIO)** | stdin/stdout | Claude Desktop/Code 로컬 연동 |
 | **MCP (SSE)** | `GET /sse` | Claude Desktop/Code 원격 연동 |
+| **MCP (Streamable HTTP)** | `POST /mcp` | 클라우드 환경, 로드밸런서 친화적 |
 | **REST API** | `/api/todos/*` | Open WebUI, 사내 시스템 연동 |
+| **Tool Docs** | `GET /api/tools` | MCP Tool 메타데이터 조회 (Swagger 대용) |
 
 ## 아키텍처
 
@@ -151,6 +155,11 @@ java -jar build/libs/spring-mcp-sample-0.0.1-SNAPSHOT.jar --spring.profiles.acti
 java -jar build/libs/spring-mcp-sample-0.0.1-SNAPSHOT.jar --spring.profiles.active=sse
 ```
 
+**Streamable HTTP 모드** (클라우드/K8s 배포 권장)
+```bash
+java -jar build/libs/spring-mcp-sample-0.0.1-SNAPSHOT.jar --spring.profiles.active=streamable
+```
+
 ## Claude Code 연동
 
 ### STDIO 모드 (기본)
@@ -164,6 +173,13 @@ claude mcp add todo-server -- java -jar /path/to/spring-mcp-sample-0.0.1-SNAPSHO
 서버를 먼저 실행한 후:
 ```bash
 claude mcp add todo-server --transport sse http://your-server:8080/sse
+```
+
+### Streamable HTTP 모드 (권장)
+
+서버를 먼저 실행한 후:
+```bash
+claude mcp add todo-server --transport http http://your-server:8080/mcp
 ```
 
 ### 연동 확인
@@ -291,6 +307,12 @@ docker exec mcp-postgres psql -U mcp_user -d mcp_db -c "SELECT * FROM todos;"
 - 포트 8080
 - 로깅 활성화
 
+### application-streamable.yml
+- `web-application-type: servlet`
+- `protocol: STREAMABLE`
+- 포트 8080
+- Stateless 가능, 로드밸런서 친화적
+
 ## 프로젝트 구조
 
 ```
@@ -304,7 +326,8 @@ spring-mcp-sample/
 │   ├── config/
 │   │   └── McpServerConfig.java
 │   ├── controller/
-│   │   └── TodoRestController.java      # REST API
+│   │   ├── TodoRestController.java      # REST API
+│   │   └── ToolDocController.java       # MCP Tool 문서 API
 │   ├── domain/
 │   │   └── Todo.java
 │   ├── repository/
@@ -314,5 +337,6 @@ spring-mcp-sample/
 └── src/main/resources/
     ├── application.yml                  # 공통 설정
     ├── application-stdio.yml            # STDIO 모드
-    └── application-sse.yml              # SSE 모드
+    ├── application-sse.yml              # SSE 모드
+    └── application-streamable.yml       # Streamable HTTP 모드
 ```

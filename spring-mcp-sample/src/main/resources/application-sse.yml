@@ -1,4 +1,13 @@
 # SSE 모드 - HTTP 서버로 외부 사용자에게 제공
+# STDIO → 웹서버 없음
+#web-application-type: none
+
+# SSE → Netty (비동기, 장기 연결에 효율적)
+#web-application-type: reactive
+
+# Streamable HTTP → Tomcat (요청-응답 단순 처리)
+#web-application-type: servlet
+
 spring:
   main:
     web-application-type: reactive
@@ -12,9 +21,14 @@ server:
   port: 8080
   netty:
     connection-timeout: 30000
+  # macOS + Java 21에서 SocketException 방지
+  tomcat:
+    socket:
+      so-linger: -1
 
 logging:
   level:
     root: INFO
     com.example.mcpsample: DEBUG
     io.netty: WARN
+    org.apache.tomcat.util.net: OFF

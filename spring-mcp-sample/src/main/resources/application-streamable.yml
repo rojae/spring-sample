@@ -1,0 +1,19 @@
+# Streamable HTTP 모드 - 최신 MCP 스펙 (2025-03-26)
+# SSE보다 스케일링, 로드밸런싱에 유리
+spring:
+  main:
+    web-application-type: servlet
+  ai:
+    mcp:
+      server:
+        stdio: false
+        protocol: STREAMABLE
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.example.mcpsample: DEBUG
+    org.apache.tomcat.util.net: ERROR
