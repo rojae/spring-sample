@@ -2,6 +2,14 @@
 
 Spring Boot 기반의 MCP (Model Context Protocol) Server 예제입니다.
 
+## 문서
+
+| 문서 | 설명 |
+|------|------|
+| **[LLM.md](./LLM.md)** | Ollama + Qwen3-Coder 설치 및 MCP 연동 가이드 |
+| [INTEGRATION.md](./INTEGRATION.md) | Open WebUI + Ollama 연동 가이드 |
+| [TRANSPORT.md](./TRANSPORT.md) | MCP Transport 모드 상세 설명 |
+
 ## 기술 스택
 
 - Java 21
@@ -319,6 +327,7 @@ docker exec mcp-postgres psql -U mcp_user -d mcp_db -c "SELECT * FROM todos;"
 spring-mcp-sample/
 ├── build.gradle
 ├── docker-compose.yml
+├── LLM.md                       # Ollama + Qwen3-Coder 설치/연동 가이드
 ├── INTEGRATION.md               # Open WebUI + Ollama 연동 가이드
 ├── test_mcp.py
 ├── src/main/java/com/example/mcpsample/
